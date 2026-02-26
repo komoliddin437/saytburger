@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Big Burger Admin Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f6f7fb; color: #1f2a37; }
+    .wrap { max-width: 1200px; margin: 20px auto; padding: 0 16px 24px; }
+    .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 16px; }
+    .card { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 6px 20px rgba(0, 0, 0, .06); }
+    .label { color: #6b7280; font-size: 13px; margin-bottom: 6px; }
+    .value { font-size: 26px; font-weight: 700; }
+    .panel { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 6px 20px rgba(0, 0, 0, .06); margin-bottom: 16px; }
+    a { color: #0f62fe; text-decoration: none; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #e5e7eb; }
+    th { color: #4b5563; font-weight: 600; }
+    .actions { display: flex; gap: 10px; }
+    .badge { padding: 4px 8px; border-radius: 999px; background: #f3f4f6; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1>Big Burger Dashboard</h1>
+      <a href="/admin/">Admin Home</a>
+    </div>
+    <section class="cards">
+      <article class="card"><div class="label">Orders (30 days)</div><div class="value">{{ orders_30d }}</div></article>
+      <article class="card"><div class="label">Revenue (30 days)</div><div class="value">{{ revenue_30d }}</div></article>
+      <article class="card"><div class="label">Users</div><div class="value">{{ users_total }}</div></article>
+    </section>
+    <section class="panel">
+      <h2>Sales and Orders Trend</h2>
+      <canvas id="trendChart" height="120"></canvas>
+    </section>
+    <section class="panel">
+      <div class="top" style="margin-bottom:10px">
+        <h2>Recent Orders</h2>
+        <a href="/admin/orders/order/">Barchasini ko'rish</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Branch</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Total</th>
+            <th>Time</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in recent_orders %}
+          <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.branch.name }}</td>
+            <td><span class="badge">{{ order.status }}</span></td>
+            <td>{{ order.payment_status }}</td>
+            <td>{{ order.total_amount }}</td>
+            <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+            <td class="actions">
+              <a href="/admin/orders/order/{{ order.id }}/change/">Tahrirlash</a>
+              <a href="/admin/orders/order/{{ order.id }}/delete/">O'chirish</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="8">Hozircha buyurtma yo'q.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+  <script>
+    const labels = {{ chart_labels|safe }};
+    const sales = {{ chart_sales|safe }};
+    const orders = {{ chart_orders|safe }};
+    new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Sales', data: sales, borderColor: '#e24a2a', backgroundColor: 'rgba(226,74,42,.1)', yAxisID: 'y' },
+          { label: 'Orders', data: orders, borderColor: '#1663d6', backgroundColor: 'rgba(22,99,214,.1)', yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          y: { type: 'linear', position: 'left' },
+          y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

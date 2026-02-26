@@ -1,0 +1,774 @@
+﻿<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Big Burger enterprise platform: online buyurtma, filiallar, tezkor yetkazib berish.">
+  <title>Big Burger Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #fbf7f2;
+      --bg-2: #efe7db;
+      --ink: #1b160f;
+      --muted: #6e6256;
+      --card: #fffaf4;
+      --line: #e4d8cb;
+      --brand: #d9481d;
+      --brand-2: #f18b2f;
+      --ok: #0f8f4f;
+      --shadow: 0 14px 40px rgba(54, 34, 17, .15);
+    }
+    [data-theme="dark"] {
+      --bg: #110f0d;
+      --bg-2: #201913;
+      --ink: #f0e6d9;
+      --muted: #b6a793;
+      --card: #1b1612;
+      --line: #3a2f26;
+      --brand: #f46233;
+      --brand-2: #f7a241;
+      --ok: #30c274;
+      --shadow: 0 14px 40px rgba(0, 0, 0, .4);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: "Outfit", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 12%, rgba(241, 139, 47, .32), transparent 28%),
+        radial-gradient(circle at 92% 82%, rgba(217, 72, 29, .28), transparent 28%),
+        linear-gradient(120deg, rgba(255, 255, 255, .35), transparent 45%),
+        linear-gradient(160deg, var(--bg), var(--bg-2));
+      min-height: 100vh;
+      transition: background .4s ease, color .3s ease;
+    }
+    .container { max-width: 1140px; margin: 0 auto; padding: 16px 14px 32px; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      position: sticky; top: 0; z-index: 40; backdrop-filter: blur(10px);
+      background: color-mix(in oklab, var(--bg) 70%, transparent); padding: 8px 0;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: .2px;
+      flex: 0 0 auto; white-space: nowrap;
+    }
+    .logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: var(--shadow);
+    }
+    .toolbar {
+      display: flex; gap: 8px; align-items: center;
+      flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    }
+    .toolbar::-webkit-scrollbar { display: none; }
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 11px; background: var(--card); color: var(--ink);
+      padding: 8px 12px; cursor: pointer; font-weight: 600; font-size: 14px;
+      min-height: 42px; line-height: 1; white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .btn:hover, .btn:focus-visible { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn.primary {
+      border: 0; color: #fff;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+    }
+    .hero {
+      margin-top: 12px; border-radius: 20px; overflow: hidden; position: relative; box-shadow: var(--shadow);
+      min-height: 300px; isolation: isolate;
+      background:
+        linear-gradient(110deg, rgba(10, 10, 10, .62), rgba(10, 10, 10, .18)),
+        url("https://images.unsplash.com/photo-1550547660-d9450f859349?w=1600&q=80&auto=format&fit=crop")
+        center/cover no-repeat;
+    }
+    .hero video {
+      width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;
+      filter: contrast(1.05) saturate(1.05) brightness(.65);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(105deg, rgba(0, 0, 0, .52) 0%, rgba(0, 0, 0, .14) 68%);
+      z-index: 1;
+    }
+    .hero-inner {
+      position: relative; z-index: 2; color: #fff; padding: 32px 28px;
+      max-width: 760px; animation: fadeUp .7s ease both;
+    }
+    .eyebrow { display: inline-flex; padding: 6px 10px; border-radius: 999px; background: rgba(255, 255, 255, .15); font-size: 13px; margin-bottom: 10px; }
+    .hero h1 { margin: 0; font: 800 40px/1.04 "Space Grotesk", sans-serif; letter-spacing: -.3px; }
+    .hero p { margin: 12px 0 0; color: rgba(255, 255, 255, .85); max-width: 62ch; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .stats { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      border-radius: 999px; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, .24);
+      background: rgba(255, 255, 255, .1); font-size: 13px;
+    }
+    .grid { margin-top: 18px; display: grid; gap: 14px; grid-template-columns: 1fr; }
+    .panel { border: 1px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: var(--shadow); padding: 14px; }
+    .head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    h2 { margin: 0; font-size: 22px; }
+    .controls { display: grid; gap: 10px; grid-template-columns: 1fr 1fr 1fr; margin-bottom: 10px; }
+    input, select {
+      width: 100%; background: transparent; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 12px; padding: 11px 12px; font: 500 14px "Outfit", sans-serif;
+    }
+    .featured { display: none; }
+    .f-card {
+      min-width: 260px; border-radius: 14px; border: 1px solid var(--line); background: color-mix(in oklab, var(--card) 90%, #fff);
+      padding: 10px; transition: transform .2s ease;
+    }
+    .f-card:hover { transform: translateY(-3px); }
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 250px));
+      gap: 8px;
+      justify-content: start;
+      margin-top: 8px;
+    }
+    .item { border: 1px solid var(--line); border-radius: 11px; padding: 6px; background: var(--card); animation: fadeUp .45s ease both; }
+    .item h3 { margin: 5px 0 3px; font-size: 16px; }
+    .thumb { width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; object-fit: cover; background: #ddd; }
+    .meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+    .price { font-weight: 700; color: var(--brand); }
+    .muted { color: var(--muted); font-size: 13px; margin: 6px 0; }
+    .stars { color: #f5a524; font-size: 13px; }
+    .cart-list { display: grid; gap: 8px; max-height: 290px; overflow: auto; padding-right: 2px; }
+    .cart-item { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding-bottom: 7px; font-size: 14px; }
+    .total { margin-top: 10px; border-top: 2px solid var(--line); padding-top: 10px; display: flex; justify-content: space-between; font-weight: 700; }
+    .status { margin: 4px 0 10px; color: var(--muted); font-size: 14px; }
+    .status.ok { color: var(--ok); }
+    .links { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .link { text-decoration: none; color: var(--ink); border: 1px solid var(--line); padding: 8px 10px; border-radius: 10px; }
+    .link:hover { background: color-mix(in oklab, var(--card) 70%, var(--brand) 30%); color: #fff; border-color: transparent; }
+    .modal {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: none; align-items: center; justify-content: center;
+      z-index: 80; padding: 16px;
+    }
+    .modal.open { display: flex; }
+    .modal-card {
+      width: min(560px, 100%); border-radius: 16px; background: var(--card); border: 1px solid var(--line);
+      padding: 14px; box-shadow: var(--shadow);
+    }
+    .branches-list { display: grid; gap: 8px; max-height: 260px; overflow: auto; }
+    .branch-row { border: 1px solid var(--line); border-radius: 10px; padding: 8px; cursor: pointer; }
+    .branch-row:hover { background: color-mix(in oklab, var(--card) 72%, var(--brand) 28%); color: #fff; }
+    .map-frame { width: 100%; height: 230px; border: 1px solid var(--line); border-radius: 10px; margin-top: 8px; }
+    .orders-list { display: grid; gap: 8px; max-height: 240px; overflow: auto; }
+    .order-row { border: 1px solid var(--line); border-radius: 10px; padding: 8px; font-size: 13px; }
+    .form-grid { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .msg { margin-top: 8px; font-size: 13px; color: var(--muted); }
+    @media (max-width: 960px) {
+      .hero h1 { font-size: 36px; }
+      .controls { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .menu { grid-template-columns: repeat(auto-fill, minmax(220px, 220px)); }
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar" aria-label="Top navigation">
+      <div class="brand"><span class="logo" aria-hidden="true"></span> Big Burger</div>
+      <nav class="toolbar" aria-label="Actions">
+        <button id="menuNavBtn" class="btn">Menyu</button>
+        <button id="branchesBtn" class="btn">Bizning filiallarimiz</button>
+        <button id="aboutNavBtn" class="btn">Biz haqimizda</button>
+        <button id="profileBtn" class="btn">Profil</button>
+        <button id="reserveBtn" class="btn">Joy zaynit</button>
+        <button id="themeBtn" class="btn" aria-label="Theme switch">Theme</button>
+        {% if request.user.is_authenticated %}
+        <a href="/auth/logout/" class="btn">Chiqish</a>
+        {% else %}
+        <a href="/auth/login/" class="btn">Kirish</a>
+        <a href="/auth/register/" class="btn">Ro'yxatdan o'tish</a>
+        {% endif %}
+        <a href="/admin/dashboard/" class="btn">Admin Dashboard</a>
+        <button class="btn primary" id="orderBtn">Buyurtma berish</button>
+      </nav>
+    </header>
+
+    <section class="hero" aria-label="Hero banner">
+      <video autoplay muted loop playsinline preload="metadata" poster="https://images.unsplash.com/photo-1550547660-d9450f859349?w=1600&q=80&auto=format&fit=crop">
+        <source src="https://cdn.coverr.co/videos/coverr-flames-on-a-grill-1579/1080p.mp4" type="video/mp4">
+      </video>
+      <div class="hero-inner">
+        <span class="eyebrow">Enterprise Food Platform</span>
+        <h1>Premium burger tajribasi, har bir filial uchun mos narx.</h1>
+        <p>Smart qidiruv, real-time branch tanlash, tezkor savatcha va gamification elementlari bir platformada.</p>
+        <div class="hero-actions">
+          <button class="btn primary" id="scrollMenu">Menyuni ko'rish</button>
+          <button class="btn" id="geoBtn">Eng yaqin filial</button>
+        </div>
+        <div class="stats">
+          <span id="nearestInfo" class="pill">Location tekshirilmoqda...</span>
+          <span id="deliveryBadge" class="pill">Delivery holati...</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="head"><h2 id="menuAnchor">Menyu</h2></div>
+        <div class="controls">
+          <select id="branchSelect" aria-label="Filial tanlash"></select>
+          <select id="categorySelect" aria-label="Kategoriya tanlash"><option value="">Barcha kategoriyalar</option></select>
+          <input id="searchInput" type="search" placeholder="Burger qidirish..." aria-label="Burger qidirish">
+        </div>
+        <p id="menuState" class="status">Menyu yuklanmoqda...</p>
+        <div id="featured" class="featured" aria-label="Mashhur burgerlar"></div>
+        <div id="menu" class="menu" aria-live="polite"></div>
+      </div>
+
+      <aside class="panel" aria-label="Cart panel">
+        <div class="head"><h2>Savatcha</h2></div>
+        <div id="cartList" class="cart-list"></div>
+        <div class="total"><span>Jami:</span><span id="cartTotal">0 so'm</span></div>
+        <div class="links">
+          <a class="link" href="https://t.me/share/url?url=https://bigburger.local&text=Big%20Burger%20aksiyalar" target="_blank" rel="noopener">Telegram ulashish</a>
+          <a class="link" href="https://www.facebook.com/sharer/sharer.php?u=https://bigburger.local" target="_blank" rel="noopener">Facebook ulashish</a>
+        </div>
+      </aside>
+    </section>
+
+    <section id="aboutSection" class="panel" style="margin-top:14px" aria-label="Biz haqimizda">
+      <div class="head"><h2>Biz haqimizda</h2></div>
+      <p class="muted">
+        Big Burger - ko'p filialli, enterprise darajadagi burger platformasi. Bizning maqsadimiz:
+        tezkor yetkazib berish, sifatli ingredientlar va zamonaviy raqamli buyurtma tajribasini birlashtirish.
+      </p>
+      <p class="muted">
+        Platformada filial bo'yicha narxlar, real-time order tracking, bonus va VIP tizim, hamda xavfsiz to'lov
+        integratsiyalari ishlaydi.
+      </p>
+    </section>
+  </div>
+
+  <div id="profileModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="head"><h2>Profil</h2><button class="btn" data-close="profileModal">Yopish</button></div>
+      <div id="profileBody" class="muted">Profil yuklanmoqda...</div>
+      <form id="profileForm" class="form-grid" style="margin-top:10px; display:none">
+        <input class="full" name="email" placeholder="Email">
+        <input class="full" name="phone" placeholder="Telefon raqam">
+        <select class="full" name="preferred_language">
+          <option value="uz">UZ</option>
+          <option value="ru">RU</option>
+          <option value="en">EN</option>
+        </select>
+        <button class="btn primary full" type="submit">Saqlash</button>
+      </form>
+      <h3 style="margin:10px 0 6px">Zakaslarim</h3>
+      <div id="profileOrders" class="orders-list"></div>
+      <p class="msg">Agar profil ochilmasa, avval login qiling: <a href="/admin/login/">/admin/login/</a></p>
+    </div>
+  </div>
+
+  <div id="reserveModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="head"><h2>Joy zaynit qilish</h2><button class="btn" data-close="reserveModal">Yopish</button></div>
+      <form id="reserveForm" class="form-grid">
+        <select class="full" id="reserveBranchSelect" name="branch" required aria-label="Filial tanlash"></select>
+        <input class="full" name="full_name" placeholder="Ismingiz" required>
+        <input class="full" name="phone" placeholder="Telefon raqam" required>
+        <input name="guests_count" type="number" min="1" value="2" required>
+        <input name="reserved_for" type="datetime-local" required>
+        <textarea class="full" name="notes" placeholder="Izoh (ixtiyoriy)" style="min-height:84px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:11px 12px;"></textarea>
+        <button class="btn primary full" type="submit">Joy band qilish</button>
+      </form>
+      <p id="reserveMsg" class="msg"></p>
+    </div>
+  </div>
+
+  <div id="checkoutModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="head"><h2>Buyurtma ma'lumotlari</h2><button class="btn" data-close="checkoutModal">Yopish</button></div>
+      <form id="checkoutForm" class="form-grid">
+        <input class="full" name="full_name" placeholder="Ism-familya" required>
+        <input class="full" name="phone" placeholder="Telefon raqam" required>
+        <select name="order_type" required>
+          <option value="delivery">Dastavka</option>
+          <option value="pickup">Olib ketish</option>
+        </select>
+        <input id="deliveryAddressInput" name="delivery_address" class="full" placeholder="Manzil (delivery uchun)">
+        <textarea class="full" name="notes" placeholder="Izoh (ixtiyoriy)" style="min-height:84px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:11px 12px;"></textarea>
+        <button class="btn primary full" type="submit">Zakas yuborish</button>
+      </form>
+      <p id="checkoutMsg" class="msg"></p>
+    </div>
+  </div>
+
+  <div id="branchesModal" class="modal" aria-hidden="true">
+    <div class="modal-card" style="width:min(720px,100%)">
+      <div class="head"><h2>Bizning filiallarimiz</h2><button class="btn" data-close="branchesModal">Yopish</button></div>
+      <div id="branchesList" class="branches-list"></div>
+      <iframe id="branchesMap" class="map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <p id="branchesLinkBox" class="msg"></p>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      branches: [],
+      categories: [],
+      selectedBranchId: null,
+      categoryId: "",
+      query: "",
+      cart: [],
+      productsById: {}
+    };
+
+    const themeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+    function applyTheme(mode) {
+      if (mode === "system") {
+        document.documentElement.dataset.theme = themeMedia.matches ? "dark" : "light";
+      } else {
+        document.documentElement.dataset.theme = mode;
+      }
+      localStorage.setItem("bb_theme", mode);
+    }
+    applyTheme(localStorage.getItem("bb_theme") || "system");
+    themeMedia.addEventListener("change", () => {
+      if ((localStorage.getItem("bb_theme") || "system") === "system") applyTheme("system");
+    });
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      const current = localStorage.getItem("bb_theme") || "system";
+      const next = current === "system" ? "light" : current === "light" ? "dark" : "system";
+      applyTheme(next);
+    });
+
+    function fmt(amount) { return `${Number(amount).toLocaleString("ru-RU")} so'm`; }
+    function stars(value) {
+      const r = Math.round(Number(value || 0));
+      return "*****".slice(0, r) + ".....".slice(0, 5 - r);
+    }
+    function debounce(fn, wait = 300) {
+      let t = null;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn(...args), wait);
+      };
+    }
+    async function fetchJSON(url) {
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(String(res.status));
+      return res.json();
+    }
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return "";
+    }
+    async function postJSON(url, payload) {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify(payload)
+      });
+      const raw = await res.text();
+      let data = {};
+      try { data = raw ? JSON.parse(raw) : {}; } catch { data = {}; }
+      if (!res.ok) {
+        const detail = data.detail || data.non_field_errors?.[0] || raw || `HTTP ${res.status}`;
+        throw new Error(detail);
+      }
+      return data;
+    }
+    function renderCart() {
+      const list = document.getElementById("cartList");
+      const totalNode = document.getElementById("cartTotal");
+      if (!state.cart.length) {
+        list.innerHTML = '<small class="muted">Savatcha bo\'sh</small>';
+        totalNode.textContent = fmt(0);
+        return;
+      }
+      let total = 0;
+      list.innerHTML = state.cart.map((item) => {
+        total += item.price * item.qty;
+        return `<div class="cart-item"><span>${item.name} x${item.qty}</span><strong>${fmt(item.price * item.qty)}</strong></div>`;
+      }).join("");
+      totalNode.textContent = fmt(total);
+    }
+    function addToCart(product) {
+      const found = state.cart.find(i => i.id === product.id);
+      if (found) found.qty += 1;
+      else state.cart.push({ id: product.id, name: product.name, price: Number(product.price), qty: 1 });
+      renderCart();
+    }
+    function filteredRows(rows) {
+      return rows.filter((row) => {
+        const p = row.product;
+        const catOk = !state.categoryId || String(p.category) === state.categoryId;
+        const q = state.query.trim().toLowerCase();
+        const qOk = !q || p.name.toLowerCase().includes(q) || (p.description || "").toLowerCase().includes(q);
+        return catOk && qOk;
+      });
+    }
+    function renderFeatured(rows) {
+      const node = document.getElementById("featured");
+      const featured = [...rows].sort((a, b) => Number(b.product.avg_rating || 0) - Number(a.product.avg_rating || 0)).slice(0, 6);
+      node.innerHTML = featured.map((row) => `
+        <article class="f-card" tabindex="0" aria-label="${row.product.name}">
+          <strong>${row.product.name}</strong>
+          <p class="muted">${row.product.description || "Mazali burger"}</p>
+          <div class="stars">${stars(row.product.avg_rating)} (${(row.product.avg_rating || 0).toFixed(1)})</div>
+        </article>
+      `).join("");
+    }
+    function renderMenu(rows) {
+      const node = document.getElementById("menu");
+      node.innerHTML = rows.map((row, i) => `
+        <article class="item" style="animation-delay:${Math.min(i * 30, 260)}ms">
+          <img loading="lazy" class="thumb" alt="${row.product.name}" src="${row.product.image_url || "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=70"}">
+          <h3>${row.product.name}</h3>
+          <p class="muted">${row.product.description || "Mazali burger"}</p>
+          <p class="muted">${(row.product.ingredients || []).map(i => i.name).join(", ") || "Ingredient malumoti kiritilmagan"}</p>
+          <div class="meta">
+            <span class="price">${fmt(row.price)}</span>
+            <span class="stars">${stars(row.product.avg_rating)} ${(row.product.avg_rating || 0).toFixed(1)}</span>
+          </div>
+          <div class="meta">
+            <button class="btn primary add-btn" data-id="${row.product.id}" data-name="${row.product.name}" data-price="${row.price}" aria-label="${row.product.name} savatchaga qo'shish">Qo'shish</button>
+            <button class="btn rate-btn" data-id="${row.product.id}" aria-label="${row.product.name} reyting yuborish">Rate</button>
+          </div>
+        </article>
+      `).join("");
+      node.querySelectorAll(".add-btn").forEach((btn) => {
+        btn.addEventListener("click", () => addToCart({ id: btn.dataset.id, name: btn.dataset.name, price: btn.dataset.price }));
+      });
+      node.querySelectorAll(".rate-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const rating = Number(prompt("Baholang (1-5):", "5"));
+          if (!rating || rating < 1 || rating > 5) return;
+          const comment = prompt("Komment (ixtiyoriy):", "") || "";
+          try {
+            await postJSON(`/api/v1/products/${btn.dataset.id}/ratings/`, { rating, comment });
+            alert("Rating saqlandi.");
+            await loadMenu(state.selectedBranchId);
+          } catch (e) {
+            alert(`Rating yuborilmadi: ${e.message}`);
+          }
+        });
+      });
+    }
+    async function loadCategories() {
+      const select = document.getElementById("categorySelect");
+      try {
+        const data = await fetchJSON("/api/v1/categories/");
+        state.categories = data;
+        select.innerHTML = '<option value="">Barcha kategoriyalar</option>' + data.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+        select.addEventListener("change", () => { state.categoryId = select.value; updateMenuView(); });
+      } catch (e) {
+        select.innerHTML = '<option value="">Kategoriya yuklanmadi</option>';
+      }
+    }
+    async function loadBranches() {
+      const select = document.getElementById("branchSelect");
+      const reserveSelect = document.getElementById("reserveBranchSelect");
+      try {
+        state.branches = await fetchJSON("/api/v1/branches/");
+        select.innerHTML = state.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join("");
+        reserveSelect.innerHTML = state.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join("");
+        renderBranchesModalList();
+        select.addEventListener("change", async () => {
+          state.selectedBranchId = Number(select.value);
+          await loadMenu(state.selectedBranchId);
+        });
+      } catch (e) {
+        select.innerHTML = '<option value="">Filial yuklanmadi</option>';
+        reserveSelect.innerHTML = '<option value="">Filial yuklanmadi</option>';
+        document.getElementById("menuState").textContent = "Filiallar API ishlamayapti. Serverni tekshiring.";
+      }
+    }
+    function mapEmbedUrl(lat, lon) {
+      const d = 0.015;
+      const bbox = `${lon - d}%2C${lat - d}%2C${lon + d}%2C${lat + d}`;
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
+    }
+    function renderBranchesModalList() {
+      const list = document.getElementById("branchesList");
+      const map = document.getElementById("branchesMap");
+      const linkBox = document.getElementById("branchesLinkBox");
+      if (!state.branches.length) {
+        list.innerHTML = '<div class="muted">Filiallar topilmadi.</div>';
+        map.removeAttribute("src");
+        linkBox.textContent = "";
+        return;
+      }
+      list.innerHTML = state.branches.map((b) => `
+        <div class="branch-row" data-branch-id="${b.id}">
+          <strong>${b.name}</strong><br>
+          <small>${b.address} | ${b.phone}</small>
+        </div>
+      `).join("");
+      const activateBranch = (branch) => {
+        map.src = mapEmbedUrl(branch.latitude, branch.longitude);
+        linkBox.innerHTML = `<a class="link" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${branch.latitude},${branch.longitude}">${branch.name} - Google Maps</a>`;
+      };
+      activateBranch(state.branches[0]);
+      list.querySelectorAll(".branch-row").forEach((row) => {
+        row.addEventListener("click", () => {
+          const branch = state.branches.find((b) => b.id === Number(row.dataset.branchId));
+          if (branch) activateBranch(branch);
+        });
+      });
+    }
+    async function loadNearestAndSet() {
+      const nearest = document.getElementById("nearestInfo");
+      const badge = document.getElementById("deliveryBadge");
+      if (!navigator.geolocation) {
+        nearest.textContent = "Geolocation support yo'q";
+        badge.textContent = "Manual filial tanlang";
+        return;
+      }
+      await new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          try {
+            const data = await fetchJSON(`/api/v1/branches/nearest/?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+            nearest.textContent = `Yaqin filial: ${data.branch.name} (${data.distance_km.toFixed(2)} km)`;
+            badge.textContent = data.is_deliverable ? "Delivery mavjud" : "Delivery mavjud emas";
+            state.selectedBranchId = data.branch.id;
+          } catch {
+            nearest.textContent = "Yaqin filial topilmadi";
+            badge.textContent = "Manual filial tanlang";
+          }
+          resolve();
+        }, () => { nearest.textContent = "Location ruxsati berilmadi"; resolve(); });
+      });
+    }
+    async function loadMenu(branchId) {
+      const stateNode = document.getElementById("menuState");
+      stateNode.textContent = "Menyu yuklanmoqda...";
+      try {
+        const data = await fetchJSON(`/api/v1/products/by_branch/?branch_id=${branchId}`);
+        state.productsById[branchId] = data;
+        updateMenuView();
+      } catch {
+        state.productsById[branchId] = [
+          { price: 47000, product: { id: 1, name: "Big Classic", description: "Signature burger", image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80", category: 1, avg_rating: 4.7, ingredients: [{name: "Beef Patty"}, {name: "Cheddar"}] } },
+          { price: 56000, product: { id: 11, name: "Double Trouble", description: "Double patty burger", image_url: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80", category: 1, avg_rating: 4.8, ingredients: [{name: "Beef Patty"}, {name: "Pickles"}] } },
+          { price: 54000, product: { id: 12, name: "Bacon Melt", description: "Cheese + bacon", image_url: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800&q=80", category: 1, avg_rating: 4.6, ingredients: [{name: "Bacon"}, {name: "Cheese"}] } },
+          { price: 46000, product: { id: 13, name: "Spicy Chicken", description: "Spicy chicken burger", image_url: "https://images.unsplash.com/photo-1561758033-7e924f619b47?w=800&q=80", category: 1, avg_rating: 4.5, ingredients: [{name: "Chicken Patty"}, {name: "Sauce"}] } },
+          { price: 18000, product: { id: 2, name: "French Fries", description: "Crispy fries", image_url: "https://images.unsplash.com/photo-1576107232684-1279f390859f?w=800&q=80", category: 2, avg_rating: 4.4, ingredients: [{name: "Potato"}, {name: "Salt"}] } },
+          { price: 21000, product: { id: 14, name: "Curly Fries", description: "Curly fries", image_url: "https://images.unsplash.com/photo-1639024471283-03518883512d?w=800&q=80", category: 2, avg_rating: 4.3, ingredients: [{name: "Potato"}] } },
+          { price: 24000, product: { id: 15, name: "Cheese Fries", description: "Fries with cheddar", image_url: "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=800&q=80", category: 2, avg_rating: 4.4, ingredients: [{name: "Cheddar"}] } },
+          { price: 22000, product: { id: 16, name: "Onion Rings", description: "Crunchy onion rings", image_url: "https://images.unsplash.com/photo-1639744210965-33a57d6f560d?w=800&q=80", category: 2, avg_rating: 4.1, ingredients: [{name: "Onion"}] } },
+          { price: 27000, product: { id: 17, name: "Nuggets 6pcs", description: "Chicken nuggets", image_url: "https://images.unsplash.com/photo-1562967914-608f82629710?w=800&q=80", category: 2, avg_rating: 4.2, ingredients: [{name: "Chicken"}] } },
+          { price: 12000, product: { id: 18, name: "Coca-Cola 0.5", description: "Sovuq ichimlik", image_url: "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800&q=80", category: 3, avg_rating: 4.3, ingredients: [{name: "Drink"}] } },
+          { price: 12000, product: { id: 19, name: "Fanta 0.5", description: "Apelsinli ichimlik", image_url: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=800&q=80", category: 3, avg_rating: 4.4, ingredients: [{name: "Drink"}] } },
+          { price: 32000, product: { id: 3, name: "Caesar Salad", description: "Yengil salat", image_url: "https://images.unsplash.com/photo-1512852939750-1305098529bf?w=800&q=80", category: 3, avg_rating: 4.2, ingredients: [{name: "Chicken"}, {name: "Lettuce"}] } },
+          { price: 33000, product: { id: 20, name: "Chicken Wrap", description: "Wrap with chicken", image_url: "https://images.unsplash.com/photo-1644898393409-7a98e6fb0395?w=800&q=80", category: 2, avg_rating: 4.1, ingredients: [{name: "Chicken"}, {name: "Lettuce"}] } },
+          { price: 34000, product: { id: 21, name: "Club Sandwich", description: "Classic sandwich", image_url: "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=800&q=80", category: 2, avg_rating: 4.0, ingredients: [{name: "Bread"}, {name: "Chicken"}] } },
+          { price: 19000, product: { id: 22, name: "Potato Wedges", description: "Spiced wedges", image_url: "https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=800&q=80", category: 2, avg_rating: 4.0, ingredients: [{name: "Potato"}] } }
+        ];
+        stateNode.textContent = "Demo menyu yuklandi.";
+        updateMenuView();
+      }
+    }
+    function updateMenuView() {
+      const stateNode = document.getElementById("menuState");
+      const rows = filteredRows(state.productsById[state.selectedBranchId] || []);
+      if (!rows.length) {
+        stateNode.textContent = "Filter bo'yicha mahsulot topilmadi.";
+        document.getElementById("menu").innerHTML = "";
+        document.getElementById("featured").innerHTML = "";
+        return;
+      }
+      stateNode.textContent = `${rows.length} ta mahsulot topildi`;
+      stateNode.className = "status ok";
+      renderMenu(rows);
+    }
+    async function init() {
+      renderCart();
+      await Promise.all([loadBranches(), loadCategories()]);
+      if (!state.branches.length) {
+        return;
+      }
+      await loadNearestAndSet();
+      if (!state.selectedBranchId && state.branches.length) state.selectedBranchId = state.branches[0].id;
+      document.getElementById("branchSelect").value = String(state.selectedBranchId);
+      await loadMenu(state.selectedBranchId);
+      document.getElementById("searchInput").addEventListener("input", debounce((e) => {
+        state.query = e.target.value;
+        updateMenuView();
+      }, 220));
+      document.getElementById("scrollMenu").addEventListener("click", () => {
+        document.getElementById("menuAnchor").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      document.getElementById("menuNavBtn").addEventListener("click", () => {
+        document.getElementById("menuAnchor").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      document.getElementById("branchesBtn").addEventListener("click", () => {
+        document.getElementById("branchesModal").classList.add("open");
+      });
+      document.getElementById("aboutNavBtn").addEventListener("click", () => {
+        document.getElementById("aboutSection").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      document.querySelectorAll("[data-close]").forEach((btn) => {
+        btn.addEventListener("click", () => document.getElementById(btn.dataset.close).classList.remove("open"));
+      });
+      document.getElementById("profileBtn").addEventListener("click", async () => {
+        const modal = document.getElementById("profileModal");
+        const body = document.getElementById("profileBody");
+        const form = document.getElementById("profileForm");
+        const ordersNode = document.getElementById("profileOrders");
+        modal.classList.add("open");
+        body.textContent = "Profil yuklanmoqda...";
+        try {
+          const profile = await fetchJSON("/api/v1/profile/");
+          body.innerHTML = `
+            <p><strong>User:</strong> ${profile.username}</p>
+            <p><strong>Phone:</strong> ${profile.phone || "-"}</p>
+            <p><strong>Bonus:</strong> ${profile.bonus_points}</p>
+            <p><strong>VIP:</strong> ${profile.vip_status}</p>
+            <p><strong>Referral:</strong> ${profile.referral_code || "-"}</p>
+          `;
+          form.style.display = "grid";
+          form.elements.email.value = profile.email || "";
+          form.elements.phone.value = profile.phone || "";
+          form.elements.preferred_language.value = profile.preferred_language || "uz";
+          const orders = profile.orders || [];
+          ordersNode.innerHTML = orders.length ? orders.map((o) => `
+            <div class="order-row">
+              <div><strong>#${o.id}</strong> | ${o.status} | ${o.total_amount} so'm</div>
+              <div>${o.delivery_address || "-"}</div>
+              <button class="btn" data-cancel-order="${o.id}" ${o.status === "cancelled" || o.status === "delivered" ? "disabled" : ""}>Cancel</button>
+            </div>
+          `).join("") : '<div class="muted">Hozircha zakas yo\'q.</div>';
+          ordersNode.querySelectorAll("[data-cancel-order]").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+              try {
+                await postJSON(`/api/v1/orders/${btn.dataset.cancelOrder}/cancel/`, {});
+                btn.textContent = "Cancelled";
+                btn.disabled = true;
+              } catch (e) {
+                alert(`Cancel bo'lmadi: ${e.message}`);
+              }
+            });
+          });
+        } catch {
+          body.innerHTML = "Profilni ochish uchun login qiling.";
+          form.style.display = "none";
+          ordersNode.innerHTML = "";
+        }
+      });
+      document.getElementById("profileForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const f = new FormData(e.target);
+        try {
+          const res = await fetch("/api/v1/profile/", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+              "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({
+              email: f.get("email"),
+              phone: f.get("phone"),
+              preferred_language: f.get("preferred_language")
+            })
+          });
+          if (!res.ok) throw new Error("Saqlashda xato");
+          alert("Profil yangilandi.");
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+      document.getElementById("reserveBtn").addEventListener("click", () => {
+        document.getElementById("reserveBranchSelect").value = String(state.selectedBranchId || "");
+        document.getElementById("reserveModal").classList.add("open");
+      });
+      document.getElementById("reserveForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById("reserveMsg");
+        const f = new FormData(e.target);
+        const payload = {
+          branch: Number(f.get("branch")),
+          full_name: f.get("full_name"),
+          phone: f.get("phone"),
+          guests_count: Number(f.get("guests_count") || 2),
+          reserved_for: new Date(f.get("reserved_for")).toISOString(),
+          notes: f.get("notes") || ""
+        };
+        try {
+          await postJSON("/api/v1/reservations/", payload);
+          msg.textContent = "Joy muvaffaqiyatli band qilindi.";
+          e.target.reset();
+        } catch (err) {
+          msg.textContent = `Xato: ${err.message}`;
+        }
+      });
+      document.getElementById("geoBtn").addEventListener("click", async () => {
+        await loadNearestAndSet();
+        if (state.selectedBranchId) {
+          document.getElementById("branchSelect").value = String(state.selectedBranchId);
+          await loadMenu(state.selectedBranchId);
+        }
+      });
+      document.getElementById("orderBtn").addEventListener("click", () => {
+        if (!state.cart.length) {
+          alert("Avval savatchaga burger qo'shing.");
+          return;
+        }
+        if (!state.selectedBranchId) {
+          alert("Avval filial tanlang.");
+          return;
+        }
+        document.getElementById("checkoutModal").classList.add("open");
+      });
+      document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById("checkoutMsg");
+        const f = new FormData(e.target);
+        const orderType = f.get("order_type");
+        const currentBranch = state.branches.find((b) => b.id === state.selectedBranchId);
+        const payload = {
+          branch: state.selectedBranchId,
+          delivery_address: orderType === "pickup" ? (currentBranch?.address || "Filialdan olib ketish") : String(f.get("delivery_address") || ""),
+          notes: `${String(f.get("notes") || "")} | type:${orderType}`,
+          items: state.cart.map((item) => ({ product_id: Number(item.id), quantity: item.qty })),
+          full_name: String(f.get("full_name") || ""),
+          phone: String(f.get("phone") || "")
+        };
+        if (!payload.delivery_address) {
+          msg.textContent = "Dastavka uchun manzil kiriting.";
+          return;
+        }
+        try {
+          const order = await postJSON("/api/v1/guest-checkout/", payload);
+          state.cart = [];
+          renderCart();
+          msg.textContent = `Buyurtma qabul qilindi. Order #${order.id}`;
+          e.target.reset();
+        } catch (err) {
+          msg.textContent = `Buyurtma yuborilmadi: ${err.message}`;
+        }
+      });
+      const checkoutType = document.querySelector('#checkoutForm select[name="order_type"]');
+      const deliveryInput = document.getElementById("deliveryAddressInput");
+      checkoutType.addEventListener("change", () => {
+        deliveryInput.required = checkoutType.value === "delivery";
+        if (checkoutType.value === "pickup") deliveryInput.value = "";
+      });
+      deliveryInput.required = checkoutType.value === "delivery";
+    }
+    init();
+  </script>
+</body>
+</html>
+
+

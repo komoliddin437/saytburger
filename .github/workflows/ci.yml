@@ -1,0 +1,53 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ "main", "staging", "production" ]
+  pull_request:
+    branches: [ "main", "staging", "production" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: big_burger
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d big_burger"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+    env:
+      SECRET_KEY: ci-secret
+      DEBUG: "False"
+      DB_ENGINE: postgres
+      DB_NAME: big_burger
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      REDIS_URL: redis://127.0.0.1:6379/1
+      AUTO_SEED_ON_STARTUP: "False"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Migrate
+        run: python manage.py migrate
+      - name: Django checks
+        run: python manage.py check
